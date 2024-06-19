@@ -20,8 +20,6 @@ if 'selected_movies' not in st.session_state:
     st.session_state.my_ratings = np.zeros(num_movies)
 
 st.title("Movie Recommendation System")
-st.write("Made by- Damanjit Singh")
-
 
 if st.button("Select 10 Random Movies for Rating"):
     st.session_state.selected_movies = np.random.choice(range(num_movies), 10, replace=False)
@@ -68,21 +66,32 @@ if np.count_nonzero(st.session_state.my_ratings) == 10:
     my_predictions = pm[:, 0]
     ix = np.argsort(my_predictions)[::-1]  # Sort predictions in descending order
 
+    # Clip predicted ratings to ensure they are within the valid range
+    my_predictions = np.clip(my_predictions, 0, 5)
+
     recommended_movies = [(movieList[j], my_predictions[j]) for j in ix[:10]]
     recommended_df = pd.DataFrame(recommended_movies, columns=['Movie', 'Predicted Rating'])
 
     st.write('\nRecommended Movies as per Predictions:\n')
     st.dataframe(recommended_df)
 
-    st.write('\n\nOriginal vs Predicted ratings:\n')
+    original_vs_predicted = []
     for i in range(len(st.session_state.my_ratings)):
         if st.session_state.my_ratings[i] > 0:
-            st.write(f'Original {st.session_state.my_ratings[i]}, Predicted {my_predictions[i]:0.2f} for {movieList[i]}')
+            original_vs_predicted.append({
+                'Movie': movieList[i],
+                'Original Rating': st.session_state.my_ratings[i],
+                'Predicted Rating': my_predictions[i]
+            })
+
+    original_vs_predicted_df = pd.DataFrame(original_vs_predicted)
+    st.write('\n\nOriginal vs Predicted ratings:\n')
+    st.dataframe(original_vs_predicted_df)
 
     filter = (movieList_df["number of ratings"] > 20)
     movieList_df["pred"] = my_predictions
     movieList_df = movieList_df.reindex(columns=["pred", "mean rating", "number of ratings", "title"])
-    recommended_movies = movieList_df.loc[ix[:300]].loc[filter].sort_values("mean rating", ascending=False)
+    recommended_movies_full = movieList_df.loc[ix[:300]].loc[filter].sort_values("mean rating", ascending=False)
 
     st.write("\n\nRecommended Movies (Top 300 by Prediction and at least 20 ratings):")
-    st.dataframe(recommended_movies)
+    st.dataframe(recommended_movies_full)
