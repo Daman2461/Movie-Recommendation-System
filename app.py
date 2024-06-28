@@ -1,11 +1,11 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
+
 from recsys_utils import *
 import pandas as pd
 import streamlit as st
 import random
-#Load data
+
 st. set_page_config(layout="wide")
 st.write(""" <h1> <b style="color:red"> Movie Reccomender System</b> </h1>""",unsafe_allow_html=True)
 st.write(""" <h6> <b style="color:white"> Uses Collaborative Filtering</b> </h6>""",unsafe_allow_html=True)
@@ -110,7 +110,7 @@ X = tf.Variable(tf.random.normal((num_movies, num_features),dtype=tf.float64),  
 b = tf.Variable(tf.random.normal((1,          num_users),   dtype=tf.float64),  name='b')
 
 # Instantiate an optimizer.
-optimizer = keras.optimizers.Adam(learning_rate=1e-1)
+optimizer = tf.keras.optimizers.Adam(learning_rate=1e-1)
 
 iterations = 200
 lambda_ = 1
