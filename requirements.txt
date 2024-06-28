@@ -1,4 +1,4 @@
 numpy
 pandas
-tensorflow
+tensorflow==2.9.1  # or another compatible version
 streamlit
