@@ -1,21 +1,23 @@
 import numpy as np
 import tensorflow as tf
-from recsys_utils import *
 import pandas as pd
 import streamlit as st
 import random
+from recsys_utils import load_precalc_params_small, load_ratings_small, load_Movie_List_pd, normalizeRatings
 
+# Set Streamlit page configuration
 st.set_page_config(layout="wide")
 st.write("""<h1><b style="color:red">Movie Recommender System</b></h1>""", unsafe_allow_html=True)
 st.write("""<h6><b style="color:white">Uses Collaborative Filtering</b></h6>""", unsafe_allow_html=True)
-st.write("""<h7><b style="color:white">Made by Damanjit</b></h7>""", unsafe_allow_html=True)
+st.write("""<h7><b style="color: white">Made by Damanjit</b></h7>""", unsafe_allow_html=True)
 
+# Load data
 X, W, b, num_movies, num_features, num_users = load_precalc_params_small()
 Y, R = load_ratings_small()
 
 def cofi_cost_func(X, W, b, Y, R, lambda_):
     j = (tf.linalg.matmul(X, tf.transpose(W)) + b - Y) * R
-    J = 0.5 * tf.reduce_sum(j**2) + (lambda_/2) * (tf.reduce_sum(X**2) + tf.reduce_sum(W**2))
+    J = 0.5 * tf.reduce_sum(j ** 2) + (lambda_ / 2) * (tf.reduce_sum(X ** 2) + tf.reduce_sum(W ** 2))
     return J
 
 movieList, movieList_df = load_Movie_List_pd()
@@ -27,28 +29,15 @@ st.session_state.options = []
 st.session_state.id = []
 with st.form("my_form"):
     options = []
-    for i in range(4):
+    for i in range(10):
         option = st.selectbox(
-            "Enter your Most Favorite Movies",
+            "Enter your Movies",
             movieList,
-            key=f'selectbox_{i}', placeholder="", index=None
+            key=f'selectbox_{i}',
+            placeholder="",
+            index=None
         )
         options.append(option)
-    for i in range(4, 7):
-        option = st.selectbox(
-            "Enter your Favorite Movies",
-            movieList,
-            key=f'selectbox_{i}', placeholder="", index=None
-        )
-        options.append(option)
-    for i in range(7, 10):
-        option = st.selectbox(
-            "Enter your Least Favorite Movies",
-            movieList,
-            key=f'selectbox_{i}', placeholder="", index=None
-        )
-        options.append(option)
-    
     submitted = st.form_submit_button('Submit my picks')
     if submitted:
         st.session_state.options = options
@@ -57,7 +46,7 @@ st.write("Selected movies:")
 for option in st.session_state.options:
     st.session_state.id.append(movieList_df['ID'][movieList_df['title'] == option])
 
-for i in st.session_state.id[0:4]:
+for i in st.session_state.id[:4]:
     my_ratings[i] = 5
 for i in st.session_state.id[4:7]:
     my_ratings[i] = random.randint(3, 4)
@@ -66,15 +55,12 @@ for i in st.session_state.id[7:10]:
 
 my_rated = [i for i in range(len(my_ratings)) if my_ratings[i] > 0]
 
-print('\nNew user ratings:\n')
-for i in range(len(my_ratings)):
-    if my_ratings[i] > 0:
-        print(f'Rated {my_ratings[i]} for {movieList_df.loc[i, "title"]}')
-
+# Reload ratings
 Y, R = load_ratings_small()
 Y = np.c_[my_ratings, Y]
 R = np.c_[(my_ratings != 0).astype(int), R]
 Ynorm, Ymean = normalizeRatings(Y, R)
+
 num_movies, num_users = Y.shape
 num_features = 100
 
@@ -112,5 +98,6 @@ for i in range(len(my_ratings)):
 filter = (movieList_df["number of ratings"] > 20)
 movieList_df["pred"] = my_predictions
 movieList_df = movieList_df.reindex(columns=["pred", "mean rating", "number of ratings", "title"])
+
 st.write("""<h1><b style="color:red">Predictions</b></h1>""", unsafe_allow_html=True)
 st.dataframe(movieList_df.loc[ix[:300]].loc[filter].sort_values("mean rating", ascending=False))
