@@ -1,4 +1,4 @@
-numpy
-pandas
-tensorflow==2.16.1  # Compatible with Python 3.11
-streamlit
+numpy==1.24.2
+pandas==2.2.2
+tensorflow==2.16.1
+streamlit==1.36.0
