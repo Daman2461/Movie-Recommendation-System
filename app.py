@@ -161,6 +161,6 @@ movieList_df["pred"] = my_predictions
 movieList_df = movieList_df.reindex(columns=["pred", "mean rating", "number of ratings", "title"])
 
 st.write(""" <h1> <b style="color:red"> Predictions</b> </h1>""",unsafe_allow_html=True)
-st.dataframe(movieList_df.loc[ix[:300]].loc[filter].sort_values("mean rating", ascending=False), width=1024,)
+st.dataframe(movieList_df.loc[ix[:300]].loc[filter].sort_values("mean rating", ascending=False) )
 
 
