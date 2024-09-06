@@ -55,7 +55,7 @@ The Movie Recommendation System leverages collaborative filtering to suggest mov
 After selecting and submitting movie preferences, the system will display personalized movie recommendations based on the trained collaborative filtering model.
 
 **GitHub:** [Movie Recommendation System](https://github.com/Daman2461/Movie-Recommendation-System)
-**Online:** [Movie Recommendation System]((https://movie-recon.streamlit.app))
+**Online:** [Movie Recommendation System](https://movie-recon.streamlit.app)
 ## Author
 - **Damanjit:** Developer and creator of the Movie Recommendation System.
 
