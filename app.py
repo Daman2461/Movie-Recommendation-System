@@ -115,26 +115,17 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=1e-1)
 iterations = 200
 lambda_ = 1
 for iter in range(iterations):
-    # Use TensorFlow’s GradientTape
-    # to record the operations used to compute the cost 
+     
     with tf.GradientTape() as tape:
-
-        # Compute the cost (forward pass included in cost)
         cost_value = cofi_cost_func(X, W, b, Ynorm, R, lambda_)
-
-    # Use the gradient tape to automatically retrieve
-    # the gradients of the trainable variables with respect to the loss
     grads = tape.gradient( cost_value, [X,W,b] )
-
-    # Run one step of gradient descent by updating
-    # the value of the variables to minimize the loss.
     optimizer.apply_gradients( zip(grads, [X,W,b]) )
 
-    # Log periodically.
+ 
     if iter % 20 == 0:
         print(f"Training loss at iteration {iter}: {cost_value:0.1f}")
 
-# Make a prediction using trained weights and biases
+# Make a prediction  
 p = np.matmul(X.numpy(), np.transpose(W.numpy())) + b.numpy()
 
 #restore the mean
