@@ -3,13 +3,7 @@ import pandas as pd
 from numpy import loadtxt
 
 def normalizeRatings(Y, R):
-    """
-    Preprocess data by subtracting mean rating for every movie (every row).
-    Only include real ratings R(i,j)=1.
-    [Ynorm, Ymean] = normalizeRatings(Y, R) normalized Y so that each movie
-    has a rating of 0 on average. Unrated moves then have a mean rating (0)
-    Returns the mean rating in Ymean.
-    """
+     
     Ymean = (np.sum(Y*R,axis=1)/(np.sum(R, axis=1)+1e-12)).reshape(-1,1)
     Ynorm = Y - np.multiply(Ymean, R) 
     return(Ynorm, Ymean)
